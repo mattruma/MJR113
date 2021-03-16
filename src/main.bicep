@@ -130,6 +130,10 @@ resource site 'microsoft.web/sites@2020-06-01' = {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
         }
+        {
+          name: 'DEFAULT_PAGE_SIZE'
+          value: '20'
+        }
       ]
       linuxFxVersion: 'DOCKER|${productId}.azurecr.io/latest'
     }
