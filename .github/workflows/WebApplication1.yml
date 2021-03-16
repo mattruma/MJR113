@@ -26,16 +26,16 @@ jobs:
         username: ${{ secrets.ACR_USER_NAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - name: Build image with docker
+    - name: Build docker image
       run : |
         docker build -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }} ./src
 
-    - name: Scan container
-      uses: azure/container-scan@v0
-      with:
-        image-name: ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
-        username: ${{ secrets.ACR_USER_NAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+    # - name: Scan docker image
+    #   uses: azure/container-scan@v0
+    #   with:
+    #     image-name: ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
+    #     username: ${{ secrets.ACR_USER_NAME }}
+    #     password: ${{ secrets.ACR_PASSWORD }}
 
     - name: Deploy image to container registry
       run : |
