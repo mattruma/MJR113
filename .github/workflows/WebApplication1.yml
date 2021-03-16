@@ -1,0 +1,37 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy WebApplication1
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  VERSION: 1.0.${{ github.run_number }}
+
+jobs:
+  build-and-deploy:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: azure/docker-login@v1
+      with:
+        login-server: https://${{ secrets.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.ACR_USER_NAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - run: |
+        docker build --build-arg VERSION=${{ env.VERSION }} -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:$VERSION ./src/WebApplication1
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
+
+    # - name: Deploy to Azure Web App
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: '${{ secrets.AZURE_RESOURCE_PREFIX }}teamaloodev0301app'
+    #     slot-name: 'production'
+    #     publish-profile: ${{ secrets.TEAMALOODEV0301APP_PUBLISH_PROFILE }}
+    #     images: '${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/teamaloousersapi:${{ env.VERSION }}'
