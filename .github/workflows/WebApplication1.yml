@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.ACR_PASSWORD }}
 
     - run: |
-        docker build -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }} ./src/WebApplication1
+        docker build -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }} ./src
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
 
     # - name: Deploy to Azure Web App
