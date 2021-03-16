@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy WebApplication1
+name: BuildAndDeployWebApplication1
 
 on:
   push:
@@ -18,17 +18,30 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - uses: azure/docker-login@v1
+      
+    - name: Docker login
+      uses: azure/docker-login@v1
       with:
         login-server: https://${{ secrets.ACR_LOGIN_SERVER }}
         username: ${{ secrets.ACR_USER_NAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - run: |
+    - name: Build image with docker
+      run : |
         docker build -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }} ./src
+
+    - name: Scan container
+      uses: azure/container-scan@v0
+      with:
+        image-name: ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
+        username: ${{ secrets.ACR_USER_NAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Deploy image to container registry
+      run : |
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
 
-    - name: Deploy to Azure Web App
+    - name: Deploy from container registry to app service
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ secrets.PRODUCT_ID }}01app
