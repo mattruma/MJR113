@@ -79,9 +79,26 @@
                 "deleteissuers"
               ]
             }
+          },
+          {
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', format('{0}01app', parameters('productId'))), '2020-06-01', 'full').identity.principalId]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "list"
+              ],
+              "certificates": [
+                "get",
+                "list"
+              ]
+            }
           }
         ]
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', format('{0}01app', parameters('productId')))]"
+      ]
     },
     {
       "type": "Microsoft.OperationalInsights/workspaces",
@@ -128,6 +145,9 @@
       "apiVersion": "2020-06-01",
       "name": "[format('{0}01app', parameters('productId'))]",
       "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "properties": {
         "siteConfig": {
           "appSettings": [
@@ -150,6 +170,10 @@
             {
               "name": "DEFAULT_PAGE_SIZE",
               "value": "20"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}01appkv.vault.azure.net/secrets/APPINSIGHTS-INSTRUMENTATIONKEY/)', parameters('productId'))]"
             }
           ],
           "linuxFxVersion": "[format('DOCKER|{0}.azurecr.io/latest', parameters('productId'))]"
@@ -159,6 +183,32 @@
       "dependsOn": [
         "[resourceId('Microsoft.ContainerRegistry/registries', format('{0}acr', parameters('productId')))]",
         "[resourceId('Microsoft.Web/serverfarms', format('{0}plan', parameters('productId')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02-preview",
+      "name": "[format('{0}01appappi', parameters('productId'))]",
+      "location": "[resourceGroup().location]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}log', parameters('productId')))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}log', parameters('productId')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2019-09-01",
+      "name": "[format('{0}/APPINSIGHTS-INSTRUMENTATIONKEY', format('{0}kv', parameters('productId')))]",
+      "properties": {
+        "value": "[reference(resourceId('Microsoft.Insights/components', format('{0}01appappi', parameters('productId')))).InstrumentationKey]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', format('{0}01appappi', parameters('productId')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}kv', parameters('productId')))]"
       ]
     }
   ]

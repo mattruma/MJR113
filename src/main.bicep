@@ -67,6 +67,20 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
             ]
           }
         }
+        {
+          objectId: site.identity.principalId
+          tenantId: subscription().tenantId
+          permissions: {
+            secrets: [
+              'get' 
+              'list'
+            ]
+            certificates: [
+              'get' 
+              'list'
+            ]
+          }
+        }
       ]
   }    
 }
@@ -111,6 +125,9 @@ resource serverFarm 'microsoft.web/serverFarms@2020-06-01' = {
 resource site 'microsoft.web/sites@2020-06-01' = {
   name: '${productId}01app'
   location: resourceGroup().location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     siteConfig: {
       appSettings: [
@@ -134,9 +151,30 @@ resource site 'microsoft.web/sites@2020-06-01' = {
           name: 'DEFAULT_PAGE_SIZE'
           value: '20'
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: '@Microsoft.KeyVault(SecretUri=https://${productId}kv.vault.azure.net/secrets/APPINSIGHTS-INSTRUMENTATIONKEY/)'
+        }
       ]
       linuxFxVersion: 'DOCKER|${productId}.azurecr.io/latest'
     }
     serverFarmId: serverFarm.id
+  }
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
+  name: '${productId}01appappi'
+  location: resourceGroup().location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: logWorkspace.id
+  }
+}
+
+resource appInsightsInstrumentationKeySecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  name: '${keyVault.name}/APPINSIGHTS-INSTRUMENTATIONKEY'
+  properties: {
+    value: appInsights.properties.InstrumentationKey
   }
 }
