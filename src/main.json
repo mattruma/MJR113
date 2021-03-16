@@ -173,7 +173,7 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}01appkv.vault.azure.net/secrets/APPINSIGHTS-INSTRUMENTATIONKEY/)', parameters('productId'))]"
+              "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}kv.vault.azure.net/secrets/APPINSIGHTS-INSTRUMENTATIONKEY/)', parameters('productId'))]"
             }
           ],
           "linuxFxVersion": "[format('DOCKER|{0}.azurecr.io/latest', parameters('productId'))]"
