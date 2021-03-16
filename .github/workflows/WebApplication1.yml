@@ -31,7 +31,7 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
-        app-name: '${{ secrets.AZURE_RESOURCE_PREFIX }}teamaloodev0301app'
+        app-name: '${{ secrets.PRODUCT_ID }}01app'
         slot-name: 'production'
-        publish-profile: ${{ secrets.APP_PUBLISH_PROFILE }}
-        images: '${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/teamaloousersapi:${{ env.VERSION }}'
+        publish-profile: ${{ secrets.WEBAPPLICATION1_PUBLISH_PROFILE }}
+        images: '${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}'

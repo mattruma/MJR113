@@ -146,6 +146,10 @@
             {
               "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
               "value": "false"
+            },
+            {
+              "name": "DEFAULT_PAGE_SIZE",
+              "value": "20"
             }
           ],
           "linuxFxVersion": "[format('DOCKER|{0}.azurecr.io/latest', parameters('productId'))]"
