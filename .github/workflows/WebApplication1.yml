@@ -42,7 +42,8 @@ jobs:
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}        
+        enable-AzPSSession: true 
 
     - name: Deploy from container registry to app service
       uses: azure/webapps-deploy@v2
