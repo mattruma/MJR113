@@ -30,14 +30,6 @@ jobs:
       run : |
         docker build -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }} ./src
 
-    # - name: Scan docker image
-    #   uses: azure/container-scan@v0
-    #   with:
-    #     image-name: ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
-    #     severity-threshold: 'MEDIUM'
-    #     username: ${{ secrets.ACR_USER_NAME }}
-    #     password: ${{ secrets.ACR_PASSWORD }}
-
     - name: Deploy image to container registry
       run : |
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
