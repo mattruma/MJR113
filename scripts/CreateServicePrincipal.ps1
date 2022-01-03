@@ -6,11 +6,10 @@ param(
 )
 
 $ServicePrincipalName = "$($ResourcePrefix)sp"
-$AppName = "$($ResourcePrefix)01app"
 $ResourceGroupName = "$($ResourcePrefix)rg"
 
 az ad sp create-for-rbac `
     --name $ServicePrincipalName `
     --sdk-auth `
     --role contributor `
-    --scopes "/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroupName)/providers/Microsoft.Web/sites/$($AppName)"
+    --scopes "/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroupName))"
