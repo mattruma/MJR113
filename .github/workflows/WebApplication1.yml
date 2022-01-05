@@ -18,9 +18,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+       
+    - uses: microsoft/variable-substitution@v1 # https://docs.microsoft.com/en-us/azure/developer/github/github-variable-substitution
+      with:
+          files: './src/WebApplication1/appsettings.json'
+      env:
+          SETTING1: "I am Setting1 from Azure appsettings.json"
+          SETTING2: "I am Setting2 from Azure appsettings.json"
+          SETTING3: ""
+       
+    - uses: microsoft/variable-substitution@v1 # https://docs.microsoft.com/en-us/azure/developer/github/github-variable-substitution
+      with:
+          files: './src/WebApplication1/appsettings.Development.json'
+      env:
+          SETTING1: "I am Setting1 from Azure appsettings.Development.json"
+          SETTING3: ""
       
-    - name: Docker login
-      uses: azure/docker-login@v1
+    - uses: azure/docker-login@v1
       with:
         login-server: https://${{ secrets.ACR_LOGIN_SERVER }}
         username: ${{ secrets.ACR_USER_NAME }}
@@ -39,14 +53,18 @@ jobs:
     needs: Build
 
     steps:
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
+    - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}        
         enable-AzPSSession: true 
 
-    - name: Deploy from container registry to app service
-      uses: azure/webapps-deploy@v2
+    - uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ secrets.PRODUCT_ID }}01app
-        images: '${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}'
+        images: '${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}'      
+
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.PRODUCT_ID }}01app
+        mask-inputs: false
+        app-settings-json: '[{ "name": "SETTING3", "value": "I am Setting3 from Docker environment", "slotSetting": false }]'
