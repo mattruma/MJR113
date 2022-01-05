@@ -40,12 +40,10 @@ jobs:
         username: ${{ secrets.ACR_USER_NAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - name: Build docker image
-      run : |
+    - run : |
         docker build -f ./src/WebApplication1/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }} ./src
 
-    - name: Deploy image to container registry
-      run : |
+    - run : |
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_USER_NAME }}/webapplication1:${{ env.VERSION }}
         
   Deploy:
