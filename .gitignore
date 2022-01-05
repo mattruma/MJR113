@@ -3,7 +3,6 @@
 
 # Settings file
 local.settings.json
-*.Development.json
 *.Development.md
 Scratch.md
 *.log

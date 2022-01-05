@@ -30,7 +30,7 @@ namespace WebApplication1
                 });
             });
 
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            services.AddApplicationInsightsTelemetry();
         }
 
 
